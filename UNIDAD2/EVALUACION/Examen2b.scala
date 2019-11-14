@@ -10,7 +10,7 @@ import org.apache.spark.ml.feature.VectorIndexer
 import org.apache.spark.ml.feature.IndexToString
 import org.apache.spark.ml.Pipeline
 //Cargamos la data de Iris que será el DataFrame
-val df = spark.read.option("header", "true").option("inferSchema","true")csv("BIG-DATA/BigData-master/data/Iris.csv")
+val df = spark.read.option("header", "true").option("inferSchema","true")csv("BIG-DATA/BigData-master/Spark_DataFrame/Iris.csv")
 //Vemos el esquema
 df.printSchema()
 //Vemos los primero 5 datos y observamos que el DataFrame no tiene cabeceras adecuadas
@@ -39,7 +39,7 @@ println(s"Found labels: ${labelIndexer.labels.mkString("[", ", ", "]")}")
 //Identificamos las caracteristicas de la columna features
 val featureIndexer = new VectorIndexer().setInputCol("features").setOutputCol("indexedFeatures").setMaxCategories(4).fit(features)
 // Dividimos los datos, 70% (105 datos) para entrenar el modelo y 30% (45 datos) para evaluarlo
-val splits = features.randomSplit(Array(0.7, 0.3))
+val splits = features.randomSplit(Array(0.6, 0.4))
 val trainingData = splits(0)
 val testData = splits(1)
 
