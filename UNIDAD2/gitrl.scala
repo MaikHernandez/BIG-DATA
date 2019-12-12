@@ -1,6 +1,7 @@
-//Hernandez Bocanegra Miguel Angel
 
-//Importamos las librerías necesarias para trabajar con MultilayerPerceptron para clasificar
+//Examen de Datos Masivos 
+//Unidad 2
+// MUltilayer perceptron
 import org.apache.spark.ml.classification.MultilayerPerceptronClassificationModel
 import org.apache.spark.ml.classification.MultilayerPerceptronClassifier
 import org.apache.spark.ml.evaluation.MulticlassClassificationEvaluator
@@ -9,20 +10,22 @@ import org.apache.spark.ml.feature.StringIndexer
 import org.apache.spark.ml.feature.VectorIndexer
 import org.apache.spark.ml.feature.IndexToString
 import org.apache.spark.ml.Pipeline
-//Cargamos la data de Iris que será el DataFrame
+import org.apache.spark.sql.SparkSession
+
+//Se carga la data de Iris que será el DataFrame
 val df = spark.read.option("header", "true").option("inferSchema","true")csv("BIG-DATA/BigData-master/Spark_DataFrame/Iris.csv")
-//Vemos el esquema
+
+// Se imprime esquema
 df.printSchema()
-//Vemos los primeros 5 datos y observamos que el DataFrame no tiene cabeceras adecuadas
-df.show(5)
-//Renombramos las columnas
+
+//Renombrar columnas
 val newnames = Seq("SepalLength","SepalWidth","PetalLength","PetalWidth","Species")
-//Nuevo DataFrames con las cabeceras renombradas
+
+//DataFrames nuevos con las cabeceras renombradas
 val dfRenamed = df.toDF(newnames: _*)
+
 //Le decimos que seleccione las columnas y asigne Species  como label
 val data = dfRenamed.select($"SepalLength",$"SepalWidth",$"PetalLength",$"PetalWidth",$"Species".as("label"))
-//Observamos el DataSet
-data.show(5)
 
 //Juntamos las columnas que serán features (caracteristicas) en una sola columna
 val assembler = new VectorAssembler()
@@ -30,8 +33,6 @@ val assembler = new VectorAssembler()
 .setOutputCol("features")
 //Transformamos la data para que quede la columna
 val features = assembler.transform(data)
-//Vemos le DataFrame con las 2 nuevas columnas que label y features
-data.show(5)
 //Encontramos las etiquetas que se encuentran en label para saber cuantos tipos de clases hay
 //Agregamos todas las etiquetas en el indixe
 val labelIndexer = new StringIndexer().setInputCol("label").setOutputCol("indexedLabel").fit(features)
@@ -75,8 +76,6 @@ predictions.show(5)
 val evaluator = new MulticlassClassificationEvaluator()
 .setLabelCol("indexedLabel")
 .setPredictionCol("prediction")
-.setMetricName("accuracy")
+.setMetricName("Precision")
 val accuracy = evaluator.evaluate(predictions)
-println("Test Error = " + (1.0 - accuracy))
-
-
+println("Porcentaje de Error = " + (1.0 - accuracy))
